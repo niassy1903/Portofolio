@@ -395,6 +395,64 @@
   <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.querySelector('.php-email-form');
+      if (!form) return;
+  
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+  
+        const loading = form.querySelector('.loading');
+        const errorMessage = form.querySelector('.error-message');
+        const sentMessage = form.querySelector('.sent-message');
+  
+        loading.style.display = 'block';
+        errorMessage.style.display = 'none';
+        sentMessage.style.display = 'none';
+  
+        const formData = new FormData(form);
+  
+        fetch(form.getAttribute('action'), {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.text())
+          .then(data => {
+            loading.style.display = 'none';
+            if (data.toLowerCase().includes('succès') || data.toLowerCase().includes('envoyé') || data.trim() === 'OK') {
+              sentMessage.style.display = 'block';
+              form.reset();
+  
+              // Disparaître après 5 secondes
+              setTimeout(() => {
+                sentMessage.style.display = 'none';
+              }, 5000);
+            } else {
+              errorMessage.style.display = 'block';
+              errorMessage.innerHTML = data;
+  
+              // Disparaître après 5 secondes aussi (facultatif)
+              setTimeout(() => {
+                errorMessage.style.display = 'none';
+              }, 5000);
+            }
+          })
+          .catch(error => {
+            loading.style.display = 'none';
+            errorMessage.style.display = 'block';
+            errorMessage.innerHTML = 'Une erreur est survenue. Veuillez réessayer.';
+  
+            // Disparaître après 5 secondes aussi (facultatif)
+            setTimeout(() => {
+              errorMessage.style.display = 'none';
+            }, 5000);
+          });
+      });
+    });
+  </script>
+  
 
   
 
